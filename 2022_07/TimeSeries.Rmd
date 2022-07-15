@@ -1,0 +1,9 @@
+---
+title: "July 2022 Time Series East Fork Creek"
+output: html_notebook
+---
+
+```{r}
+
+```
+
