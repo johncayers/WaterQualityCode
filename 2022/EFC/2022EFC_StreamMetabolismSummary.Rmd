@@ -16,10 +16,9 @@ knitr::opts_chunk$set(error = FALSE)
 ### Useful packages
 
 ```{r import packages}
-# if (!require("pacman"))
-#    install.packages("pacman")
-# pacman::p_load(tidyverse, skimr)
-library(tidyverse)
+if (!require("pacman"))
+   install.packages("pacman")
+pacman::p_load(tidyverse, skimr)
 ```
 
 ```{r}
@@ -29,26 +28,6 @@ Data <- read_csv("2022EFC_StreamMetabolismSummary.csv",
         Device = col_factor(levels = c("MiniDOT", 
             "Exo2"))))
 skim(Data)
-```
-
-
-```{r}
-DataMean <- Data %>%
-  group_by(Date) %>%
-  summarize(
-    GPP = mean(GPP.mean),
-    ER = mean(ER.mean),
-    NEP = mean(NEP.mean)
-  )
-DataMean
-p <- ggplot(DataMean, aes(x=Date)) +
-  geom_area(aes(y=GPP), fill = "green") +
-  geom_area(aes(y=-ER), fill = "brown") +
-  geom_line(aes(y=NEP), color = "black") +
-  ylim(-35,35) +
-  ylab("Value (mg O2 L-1 day-1)")
-print(p)
-ggsave("2022_EFC_GPPvsER.png", width = 2000, height = 2*618, units = "px")
 ```
 
 ```{r}
@@ -98,16 +77,22 @@ ggsave("2022_EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units
 ```{r}
 DataMean <- DataPlot %>%
   group_by(Date, Parameter) %>%
+  filter(Parameter != "NEP") %>%
   summarize(
        Value = mean(Value)
       )
+# Don'e know why the following loop returns an error, because it does what I intend
 for (i in 1:j) 
    if(DataMean$Parameter[i] == "ER") {
     DataMean$Value[i] = -DataMean$Value[i]
-}
+   }
+ 
 DataMean
+# Metab_palette <- c("#117733", "#661100")
+
 p <- ggplot(DataMean, aes(x=Date, y = Value, fill = Parameter)) +
   geom_area() +
+  scale_fill_manual(values = c("brown", "green")) +
   ylim(-35,35) +
   ylab("Value (mg O2 L-1 day-1)")
 print(p)
