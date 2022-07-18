@@ -9,7 +9,7 @@ This notebook analyzes chemical data from in-situ measurements and water samples
 
 ```{r set-global, include=FALSE}
 # Suppress all error messages
-# knitr::opts_chunk$set(error = FALSE)
+knitr::opts_chunk$set(error = FALSE)
 ```
 
 ### Useful packages

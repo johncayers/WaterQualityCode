@@ -1,0 +1,102 @@
+---
+title: "2022 East Fork Creek Stream Metabolism Summary"
+author: "John C. Ayers"
+output: html_notebook
+---
+
+This notebook is for creating summary plots of stream metabolism parameters estimated from dissolved osygen time series using the BASEmetab package of Grace et al. (2015). In-situ measurements collected from East Fork Creek in Franklin, TN by John C. Ayers, Weizhuo Jing, Kevin Chen, Ella Daugherty, and Gabriel Perez in Summer 2022.  
+Reference:
+Grace MR, Giling DP, Hladyz S, et al (2015) Fast processing of diel oxygen curves: Estimating stream metabolism with BASE (BAyesian Single-station Estimation). Limnol. Oceanogr. methods / 13:e10011
+
+```{r set-global, include=FALSE}
+# Suppress all error messages
+knitr::opts_chunk$set(error = FALSE)
+```
+
+### Useful packages
+
+```{r import packages}
+if (!require("pacman"))
+   install.packages("pacman")
+pacman::p_load(tidyverse, skimr)
+```
+
+```{r}
+setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Shared Documents/Pilot Project - Water Quality/WaterQualityCode/2022/EFC")
+Data <- read_csv("2022EFC_StreamMetabolismSummary.csv", 
+    col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
+        Device = col_factor(levels = c("MiniDOT", 
+            "Exo2"))))
+skim(Data)
+```
+
+```{r}
+
+DataLong <- Data %>%
+  gather(GPP.mean, ER.mean, NEP.mean, key = "Parameter", value = "Value") 
+
+DataLong$Types <- case_when(
+  grepl("GP", DataLong$Parameter, fixed = TRUE) ~ "GPP",
+  grepl("ER", DataLong$Parameter, fixed = TRUE) ~ "ER",
+  grepl("NE", DataLong$Parameter, fixed = TRUE) ~ "NEP"
+)
+DataLong$max <- c(0)
+DataLong$min <- c(0)
+j <- nrow(DataLong)
+for (i in 1:j) {
+  if (DataLong$Types[i] == "GPP") {
+  DataLong$max[i] <- DataLong$Value[i] + DataLong$GPP.sd[i]
+  DataLong$min[i] <- DataLong$Value[i] - DataLong$GPP.sd[i]
+}  
+else if (DataLong$Types[i] == "ER") {
+  DataLong$max[i] <- DataLong$Value[i] + DataLong$ER.sd[i]
+  DataLong$min[i] <- DataLong$Value[i] - DataLong$ER.sd[i]
+} 
+  else {
+  DataLong$max[i] <- DataLong$Value[i] + DataLong$NEP.sd[i]
+  DataLong$min[i] <- DataLong$Value[i] - DataLong$NEP.sd[i]
+}
+}
+DataLong$Types <- factor(DataLong$Types)
+DataPlot <- DataLong %>%
+  select(Date, Device, Types, Value, max, min) %>%
+  rename(Parameter = Types)
+
+```
+
+```{r}
+p <- ggplot(DataPlot, aes(x = Date, y = Value, color = Parameter)) +
+  geom_errorbar(aes(ymin = min, ymax = max)) +
+  geom_point(aes(shape = Device)) +
+  theme_bw()
+print(p)
+ggsave("2022_EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units = "px")
+
+```
+
+```{r}
+DataMean <- DataPlot %>%
+  group_by(Date, Parameter) %>%
+  filter(Parameter != "NEP") %>%
+  summarize(
+       Value = mean(Value)
+      )
+# Don'e know why the following loop returns an error, because it does what I intend
+for (i in 1:j) 
+   if(DataMean$Parameter[i] == "ER") {
+    DataMean$Value[i] = -DataMean$Value[i]
+   }
+ 
+DataMean
+# Metab_palette <- c("#117733", "#661100")
+
+p <- ggplot(DataMean, aes(x=Date, y = Value, fill = Parameter)) +
+  geom_area() +
+  scale_fill_manual(values = c("brown", "green")) +
+  ylim(-35,35) +
+  ylab("Value (mg O2 L-1 day-1)")
+print(p)
+ggsave("2022_EFC_GPPvsER.png", width = 2000, height = 2*618, units = "px")
+
+```
+
