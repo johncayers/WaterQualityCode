@@ -16,10 +16,9 @@ knitr::opts_chunk$set(error = FALSE)
 
 ```{r}
 
-setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Shared Documents/Pilot Project - Water Quality/Data/2022/Survey")
 if (!require("pacman"))
   install.packages("pacman")
-pacman::p_load(tidyverse, readxl, sf, sp, rgdal, tmap, GISTools, RgoogleMaps, leaflet, skimr, raster, corrplot)
+pacman::p_load(tidyverse, readxl, sf, sp, rgdal, tmap, RgoogleMaps, leaflet, skimr, raster, corrplot)
 
 ```
 

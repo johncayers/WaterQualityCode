@@ -6,17 +6,18 @@ output:
 ---
 
 ```{r}
-# setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Projects/HarpethRiver/MillCreek")
+
 if (!require("pacman"))
    install.packages("pacman")
-pacman::p_load(tidyverse, skimr,leaflet, htmltools)
+pacman::p_load(tidyverse, skimr,leaflet, htmltools, EnvStats, psych)
 Sites <- read_csv("StreamSites.csv")
 Data <- read_csv("EFCvsMCvsHR_CompleteV3.csv")
 skim(Data)
 Data$logP <- log10(Data$P)
 Species <- c("logP", "NO3")
 DataParams <- Data %>%
-  select(Stream, all_of(Species))
+  dplyr::select(Stream, all_of(Species))
+
 DataLong <- DataParams %>%
   gather(Species, key = "Species", value = "Concentration") %>%
   unite("Species_Stream", Species:Stream, remove = FALSE)
@@ -48,18 +49,6 @@ m
 library(psych)
 myvars <- c("P", "NO3")
 describeBy(Data[myvars], list(Stream = Data$Stream))
-# mystats <- function(x,na.omit=FALSE){
-#   if(na.omit)
-#     x<-x[!is.na(x)]
-#   m<-mean(x)
-#   n<-length(x)
-#   s<-sd(x)
-#   return(c(n=n,mean=m,stdev=s))
-#   }
-# Robert Kabacoff. R in Action, Second Edition: Data analysis and graphics with R (Kindle Locations 3330-3334). Manning Publications. Kindle Edition. 
-# dstats <- function(x)sapply(x, mystats)
-# myvars <- c("P", "NO3")
-# by(Data[myvars], Data$Stream, dstats)
 
 ```
 
