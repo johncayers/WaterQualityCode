@@ -81,7 +81,7 @@ DataMean <- DataPlot %>%
   summarize(
        Value = mean(Value)
       )
-# Don'e know why the following loop returns an error, because it does what I intend
+# Don't know why the following loop returns an error, because it does what I intend
 for (i in 1:j) 
    if(DataMean$Parameter[i] == "ER") {
     DataMean$Value[i] = -DataMean$Value[i]
