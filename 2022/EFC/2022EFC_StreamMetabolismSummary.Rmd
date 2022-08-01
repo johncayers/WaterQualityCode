@@ -22,7 +22,7 @@ pacman::p_load(tidyverse, skimr)
 ```
 
 ```{r}
-setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Shared Documents/Pilot Project - Water Quality/WaterQualityCode/2022/EFC")
+# setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Shared Documents/Pilot Project - Water Quality/WaterQualityCode/2022/EFC")
 Data <- read_csv("2022EFC_StreamMetabolismSummary.csv", 
     col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
         Device = col_factor(levels = c("MiniDOT", 
@@ -33,22 +33,18 @@ skim(Data)
 ```{r}
 
 DataLong <- Data %>%
-  gather(GPP.mean, ER.mean, NEP.mean, key = "Parameter", value = "Value") 
-
-DataLong$Types <- case_when(
-  grepl("GP", DataLong$Parameter, fixed = TRUE) ~ "GPP",
-  grepl("ER", DataLong$Parameter, fixed = TRUE) ~ "ER",
-  grepl("NE", DataLong$Parameter, fixed = TRUE) ~ "NEP"
-)
+  rename(GPP = GPP.mean, ER = ER.mean, NEP = NEP.mean) %>%
+  gather(GPP, ER, NEP, key = "Parameter", value = "Value")
+  
 DataLong$max <- c(0)
 DataLong$min <- c(0)
 j <- nrow(DataLong)
 for (i in 1:j) {
-  if (DataLong$Types[i] == "GPP") {
+  if (DataLong$Parameter[i] == "GPP") {
   DataLong$max[i] <- DataLong$Value[i] + DataLong$GPP.sd[i]
   DataLong$min[i] <- DataLong$Value[i] - DataLong$GPP.sd[i]
 }  
-else if (DataLong$Types[i] == "ER") {
+else if (DataLong$Parameter[i] == "ER") {
   DataLong$max[i] <- DataLong$Value[i] + DataLong$ER.sd[i]
   DataLong$min[i] <- DataLong$Value[i] - DataLong$ER.sd[i]
 } 
@@ -57,10 +53,10 @@ else if (DataLong$Types[i] == "ER") {
   DataLong$min[i] <- DataLong$Value[i] - DataLong$NEP.sd[i]
 }
 }
-DataLong$Types <- factor(DataLong$Types)
+DataLong$Parameter <- factor(DataLong$Parameter)
 DataPlot <- DataLong %>%
-  select(Date, Device, Types, Value, max, min) %>%
-  rename(Parameter = Types)
+  select(Date, Device, Parameter, Value, max, min)
+ 
 
 ```
 
@@ -68,6 +64,7 @@ DataPlot <- DataLong %>%
 p <- ggplot(DataPlot, aes(x = Date, y = Value, color = Parameter)) +
   geom_errorbar(aes(ymin = min, ymax = max)) +
   geom_point(aes(shape = Device)) +
+  geom_smooth(method = "lm", se = FALSE) +
   theme_bw()
 print(p)
 ggsave("2022_EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units = "px")
@@ -75,20 +72,22 @@ ggsave("2022_EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units
 ```
 
 ```{r}
+
 DataMean <- DataPlot %>%
   group_by(Date, Parameter) %>%
   filter(Parameter != "NEP") %>%
   summarize(
        Value = mean(Value)
       )
-# Don't know why the following loop returns an error, because it does what I intend
-for (i in 1:j) 
+
+j <- nrow(DataMean)
+for (i in 1:j) {
    if(DataMean$Parameter[i] == "ER") {
-    DataMean$Value[i] = -DataMean$Value[i]
+    DataMean$Value[i] <- -DataMean$Value[i]
    }
+}
  
 DataMean
-# Metab_palette <- c("#117733", "#661100")
 
 p <- ggplot(DataMean, aes(x=Date, y = Value, fill = Parameter)) +
   geom_area() +
