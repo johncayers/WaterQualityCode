@@ -40,21 +40,6 @@ skim(Data)
 
 ```
 
-### Individual time series
-
-```{r}
-SelectData <- select(Data, DateTime, Light_lux, Temp_C, pH, Depth_m, SpCond_uS_cm, ODO_PerLocSat, fDOM_RFU, Chlorophyll_RFU, TAL_PC_RFU)
-for (i in 2:10) {
-  j <- names(SelectData)[i]
-  p <- ggplot(SelectData, aes_(x = ~DateTime, y = as.name(j))) +
-    theme_linedraw() +
-    geom_line(color = "blue")
-print(p)
-ggsave(str_c("2022_07_EFC_TimeSeries_", j, '.png'), plot = p, path = "Plots")
-}
-
-```
-
 ### Grouped time series
 
 ```{r}

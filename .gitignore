@@ -5,11 +5,8 @@
 .Rprofile
 *.html
 *.png
-<<<<<<< HEAD
 *.pdf
 *.docx
 *.jpg
 *.pptx
 renv.lock
-=======
->>>>>>> 9f2b736eef74900ee5b0165ffeb2d7eba5b79a1e
