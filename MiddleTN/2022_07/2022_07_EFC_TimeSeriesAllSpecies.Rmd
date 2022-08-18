@@ -106,10 +106,3 @@ ggsave("2022_07_EFC_TimeSeriesPercChangeAllSpecies.png", path = "Plots")
 
 ```
 
-
-```{r}
-sessionInfo()
-save.image()
-
-```
-

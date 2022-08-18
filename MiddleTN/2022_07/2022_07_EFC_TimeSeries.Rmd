@@ -5,7 +5,7 @@ output:
   html_document:
     df_print: paged
 ---
-This notebook analyzes chemical data from in-situ measurements and water samples collected from East Fork Creek in Franklin, TN by John C. Ayers, Weizhuo Jing, Kevin Chen, Ella Daugherty, and Gabriel Perez in July 2022. It shows the sample site in a map, and then creates time series plots illustrating the diel cycles. 
+This notebook analyzes chemical data from in-situ measurements from East Fork Creek in Franklin, TN by John C. Ayers, Weizhuo Jing, Kevin Chen, Ella Daugherty, and Gabriel Perez in July 2022. It shows the sample site in a map, and then creates time series plots illustrating the diel cycles. 
 
 ```{r set-global, include=FALSE}
 # Suppress all error messages
@@ -89,7 +89,7 @@ ggsave("2022_07_EFC_TimeSeriesPercChange.png", path = "Plots")
 ### Correlation Matrix
 
 ```{r}
-Parameters <- select(SelectData, -DateTime)
+Parameters <- select(DataFacet, -c(DateTime, days, LightInt, Light))
 Corr <- cor(Parameters, use = "pairwise.complete.obs", method = "spearman")
 corrplot(Corr, method="circle")
 dev.copy(png, "Plots/CorrelationMatrix.png")
@@ -101,7 +101,7 @@ dev.off()
 
 ```{r}
 
-scatterplotMatrix(~Light_lux + Temp_C + pH + Depth_m + SpCond_uS_cm + ODO_PerLocSat + fDOM_RFU + Chlorophyll_RFU + TAL_PC_RFU, data = Parameters)
+scatterplotMatrix(~Light_lux + Temp_C + pH + SpCond_uS_cm + ODO_PerLocSat + fDOM_RFU + TAL_PC_RFU, data = Parameters)
 dev.copy(png, "Plots/ScatterplotMatrix.png")
 dev.off()
 
@@ -113,7 +113,7 @@ dev.off()
 # DataFacetLong %>%
 #   group_by(variable) %>%
 #   plot_seasonal_diagnostics(DateTime, measurement, .feature_set = c("hour"), .interactive = FALSE, nrow = 3)
-
+SelectData <- select(Data, DateTime, Light_lux, Temp_C, pH, Depth_m, SpCond_uS_cm, ODO_PerLocSat, fDOM_RFU, Chlorophyll_RFU, TAL_PC_RFU)
 plot_seasonal_diagnostics(SelectData, DateTime, Light_lux, .feature_set = c("hour"), .interactive = TRUE, .title = "Light (lux)")
 plot_seasonal_diagnostics(SelectData, DateTime, Temp_C, .feature_set = c("hour"), .interactive = TRUE, .title = "Temperature (°C)")
 plot_seasonal_diagnostics(SelectData, DateTime, pH, .feature_set = c("hour"), .interactive = TRUE, .title = "pH")
@@ -124,11 +124,3 @@ plot_seasonal_diagnostics(SelectData, DateTime, Chlorophyll_RFU, .feature_set = 
 plot_seasonal_diagnostics(SelectData, DateTime, TAL_PC_RFU, .feature_set = c("hour"), .interactive = TRUE, .title = "Total Algae (RFU)")
 
 ```
-
-
-```{r}
-sessionInfo()
-save.image()
-
-```
-
