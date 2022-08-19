@@ -42,15 +42,22 @@ skim(Data)
 
 ### Grouped time series
 
+Should we use a moving average for light intensity? The dependent variables respond slower than light intensity varies due to clouds
+
 ```{r}
-DataFacet <- transmute(Data, DateTime, days, Light_lux, Temp_C, pH, Depth_m, SpCond_uS_cm, ODO_PerLocSat, fDOM_RFU, Chlorophyll_RFU, TAL_PC_RFU,
-  LightInt = rescale(Light_lux, to = c(0,1), from = range(Light_lux)),
-  Light = if_else(Light_lux == 0, 1, 0)
-  )
-DataFacetLong <-  gather(DataFacet, variable, measurement, Light_lux:TAL_PC_RFU, factor_key=TRUE)
-# Figure out how to shade using Light variable
+DataFacet <- transmute(Data, DateTime, days, Light_lux, Temp_C, pH, Depth_m, SpCond_uS_cm, ODO_PerLocSat, fDOM_RFU, Chlorophyll_RFU, TAL_PC_RFU)
+  # LightInt = rescale(Light_lux, to = c(0,1), from = range(Light_lux)),
+  # Shade = if_else(Light_lux == 0, "gray60", "gray90")
+  # )
+DataFacetLong <- pivot_longer(DataFacet, names_to = "variable", values_to = "measurement", Light_lux:TAL_PC_RFU)
+
 p <- ggplot(DataFacetLong, aes(x=days)) +
   theme_linedraw() +
+  # geom_rect(aes(xmin = days, xmax = lead(days), ymin = -Inf, ymax = Inf, fill = Shade)) +
+  # scale_fill_identity() +
+   # geom_segment(aes(x = DateTime, xend = DateTime, y = -Inf, yend = Inf, color = Light_lux)) +
+   #  scale_color_gradient(low = gray.colors(1, 0.25),
+   #                        high = gray.colors(1, 1) ) +
   geom_line(aes(y = measurement), color = "blue") +
   # geom_col(aes(y=Light), color = "grey", alpha = 0.1) +
   # scale_y_continuous(sec.axis = sec_axis(~.)) +

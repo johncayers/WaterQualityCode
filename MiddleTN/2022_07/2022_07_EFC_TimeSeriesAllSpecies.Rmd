@@ -41,15 +41,14 @@ skim(Data)
 
 ### Individual time series
 
-Should we use a moving average for light intensity? The dependent variables respond slower than light intensity varies due to clouds
-
 ```{r}
+
 SelectData <- select(Data, DateTime:Nitrate)
 for (i in 2:31) {
   j <- names(SelectData)[i]
   p <- ggplot(SelectData, aes_(x = ~DateTime, y = as.name(j))) +
     theme_linedraw() +
-    geom_line(color = "blue")
+     geom_line(color = "blue")
 print(p)
 ggsave(str_c("2022_07_EFC_TimeSeriesAllSpecies_", j, '.png'), plot = p, path = "Plots")
 }
@@ -66,43 +65,20 @@ ggplotFunc <- function(d){
   geom_line(aes(y = measurement), color = "blue") +
   facet_wrap(~ variable, scales = "free", nrow = 4)
   print(p)
-  }
+}
+
 InSitu <- Data %>%
   select(ElapsedHours, Light_lux:TAL_PC_RFU) %>%
-  gather(variable, measurement, Light_lux:TAL_PC_RFU, factor_key=TRUE)
+  pivot_longer(names_to = "variable", values_to = "measurement", Light_lux:TAL_PC_RFU)
+ 
 p <- ggplotFunc(InSitu)
 ggsave("2022_07_EFC_TimeSeriesInSitu.png", path = "Plots")
+
 Elements <- Data %>%
   select(ElapsedHours, Ca:Nitrate) %>%
-  gather(variable, measurement, Ca:Nitrate, factor_key=TRUE)
+  pivot_longer(names_to = "variable", values_to = "measurement", Ca:Nitrate)
+
 p <- ggplotFunc(Elements)
 ggsave("2022_07_EFC_TimeSeriesElements.png", path = "Plots")
 
 ```
-
-### Temporal trends daily timescale
-
-```{r}
-percent_change <- function(x) {
-  x <- 100*((x - mean(x, na.rm = TRUE))/mean(x, na.rm = TRUE))
-}
-PercChange <- transmute(Data, ElapsedHours,
-                  Light_lux = percent_change(Light_lux),
-                  Temp_C = percent_change(Temp_C),
-                  pH = percent_change(pH),
-                  SpCond_uS_cm = percent_change(SpCond_uScm),
-                  ODO_PerLocSat = percent_change(ODO_PercLocSat),
-                  fDOM_RFU = percent_change(fDOM_RFU),
-                  Chlorophyll_RFU = percent_change(Chlorophyll_RFU),
-                  TAL_PC_RFU = percent_change(TAL_PC_RFU)
-                  )
-PercChangeLong <-  gather(PercChange, variable, measurement, Light_lux:TAL_PC_RFU)
-p <- ggplot(PercChangeLong, aes(x = ElapsedHours, y = measurement, color = variable)) +
-  theme_bw() +
-    geom_line() +
-    ylab("% change")
-print(p)
-ggsave("2022_07_EFC_TimeSeriesPercChangeAllSpecies.png", path = "Plots")
-
-```
-
