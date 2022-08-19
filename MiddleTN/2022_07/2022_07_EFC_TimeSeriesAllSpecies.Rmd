@@ -42,13 +42,13 @@ skim(Data)
 ### Individual time series
 
 ```{r}
-
-SelectData <- select(Data, DateTime:Nitrate)
-for (i in 2:31) {
+# Don't plot in-situ measurements as most measurements have been filtered out
+SelectData <- select(Data, DateTime, Ca:Nitrate)
+for (i in 2:21) {
   j <- names(SelectData)[i]
   p <- ggplot(SelectData, aes_(x = ~DateTime, y = as.name(j))) +
     theme_linedraw() +
-     geom_line(color = "blue")
+    geom_line(color = "blue")
 print(p)
 ggsave(str_c("2022_07_EFC_TimeSeriesAllSpecies_", j, '.png'), plot = p, path = "Plots")
 }

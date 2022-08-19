@@ -21,16 +21,6 @@ pacman::p_load(tidyverse, skimr, leaflet, scales, corrplot, car, timetk)
 
 ```
 
-### Map of site location
-
-```{r Map}
-m <- leaflet(df) %>% addMarkers(lat = 35.951470, lng = -87.016110) %>% 
-  addProviderTiles(providers$Esri.NatGeoWorldMap)
-# See http://leaflet-extras.github.io/leaflet-providers/preview/index.html
-m
-
-```
-
 ```{r}
 Data <- read_csv("EXO_Data_070622.csv", col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
     Time = col_time(format = "%H:%M:%S"), 
@@ -46,26 +36,35 @@ Should we use a moving average for light intensity? The dependent variables resp
 
 ```{r}
 DataFacet <- transmute(Data, DateTime, days, Light_lux, Temp_C, pH, Depth_m, SpCond_uS_cm, ODO_PerLocSat, fDOM_RFU, Chlorophyll_RFU, TAL_PC_RFU)
-  # LightInt = rescale(Light_lux, to = c(0,1), from = range(Light_lux)),
-  # Shade = if_else(Light_lux == 0, "gray60", "gray90")
-  # )
-DataFacetLong <- pivot_longer(DataFacet, names_to = "variable", values_to = "measurement", Light_lux:TAL_PC_RFU)
+DataFacetLong <- pivot_longer(DataFacet, names_to = "variable", values_to = "measurement", Temp_C:TAL_PC_RFU)
 
 p <- ggplot(DataFacetLong, aes(x=days)) +
   theme_linedraw() +
-  # geom_rect(aes(xmin = days, xmax = lead(days), ymin = -Inf, ymax = Inf, fill = Shade)) +
-  # scale_fill_identity() +
-   # geom_segment(aes(x = DateTime, xend = DateTime, y = -Inf, yend = Inf, color = Light_lux)) +
-   #  scale_color_gradient(low = gray.colors(1, 0.25),
-   #                        high = gray.colors(1, 1) ) +
+  # Here try preferred method of continuous shading based on light intensity 
+  geom_segment(aes(x = days, xend = days, y = -Inf, yend = Inf, color = log(Light_lux))) +
+   scale_color_gradient(low = "grey", high = "white") +
   geom_line(aes(y = measurement), color = "blue") +
-  # geom_col(aes(y=Light), color = "grey", alpha = 0.1) +
-  # scale_y_continuous(sec.axis = sec_axis(~.)) +
   facet_wrap(~ variable, scales = "free", nrow = 3)
 print(p)
 ggsave("2022_07_EFC_TimeSeries.png", path = "Plots")
 
 ```
+
+### Individual time series
+
+```{r}
+for (i in 3:11) {
+  j <- names(DataFacet)[i]
+  p <- ggplot(DataFacet, aes_(x = ~DateTime, y = as.name(j))) +
+    theme_linedraw() +
+    geom_segment(aes(x = DateTime, xend = DateTime, y = -Inf, yend = Inf, color = log(Light_lux)), alpha = 0.5) +
+   scale_color_gradient(low = "black", high = "white") +
+     geom_line(color = "blue")
+print(p)
+ggsave(str_c("2022_07_EFC_TimeSeriesAllSpecies_", j, '.png'), plot = p, path = "Plots")
+}
+```
+
 
 ### Temporal trends daily timescale
 
@@ -76,7 +75,7 @@ percent_change <- function(x) {
 # Get error message when using purrr:map_dbl() caused by percent_change function
 # PercChangTibble <- select(DataFacet, Light_lux:TAL_PC_RFU) %>%
 #   map_dbl(percent_change)
-PercChangeTibble <- unlist(sapply(DataFacet[,3:11], function(x) perc_change_fnct(x)))
+PercChangeTibble <- unlist(sapply(DataFacet[,3:11], function(x) percent_change(x)))
 PercChange <- bind_cols(DataFacet$days, PercChangeTibble) %>%
   rename(days = ...1)
 PercChangeLong <- pivot_longer(PercChange, names_to = "variable", values_to = "measurement", Light_lux:TAL_PC_RFU)
@@ -92,7 +91,7 @@ ggsave("2022_07_EFC_TimeSeriesPercChange.png", path = "Plots")
 ### Correlation Matrix
 
 ```{r}
-Parameters <- select(DataFacet, -c(DateTime, days, LightInt, Light))
+Parameters <- select(DataFacet, -c(DateTime, days))
 Corr <- cor(Parameters, use = "pairwise.complete.obs", method = "spearman")
 corrplot(Corr, method="circle")
 dev.copy(png, "Plots/CorrelationMatrix.png")
