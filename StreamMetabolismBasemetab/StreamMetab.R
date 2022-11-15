@@ -3,13 +3,12 @@
 # install BASEmetab package
 devtools::install_github("dgiling/BASEmetab")
 # Remove the package zip after installation
-# unlink("BASEmetab.zip")
+unlink("BASEmetab.zip")
 # load R2jags to connect to JAGS
 library(R2jags)
-##Link to JAGS
 library(BASEmetab)
 library(readr)
-# setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Projects/StreamMetabolism")
+setwd("C:/Users/ayersj.VANDERBILT/R/WaterQualityCode/StreamMetabolismBasemetab")
 # Read datafile
 # Data <- read_csv("Yallakool_example.csv", col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
 #                                                   Time = col_time(format = "%H:%M:%S")), 
@@ -20,6 +19,6 @@ results.dir <- file.path(getwd(), "StreamMetabolismBasemetab/Output")
 # "interval" is the time interval in seconds.
 # I think there has to be at least one full day where measurements are made for the full 24 hours.
 # Only one csv file should be in the input folder
-results <- bayesmetab(data.dir, results.dir, interval = 300)
+results <- bayesmetab(data.dir, results.dir, interval = 300, instant = TRUE)
 # with prior K
-results <- bayesmetab(data.dir, results.dir, interval = 600, K.est = FALSE, K.meas.mean = 5)
+results <- bayesmetab(data.dir, results.dir, interval = 300, K.est = FALSE, K.meas.mean = 5)
