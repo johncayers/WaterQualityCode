@@ -9,15 +9,17 @@ library(R2jags)
 ##Link to JAGS
 library(BASEmetab)
 library(readr)
-setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Projects/StreamMetabolism")
+# setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Projects/StreamMetabolism")
 # Read datafile
 # Data <- read_csv("Yallakool_example.csv", col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
 #                                                   Time = col_time(format = "%H:%M:%S")), 
 #                  locale = locale(tz = "America/Chicago"))
 # View(Data)
-data.dir <- file.path(getwd(), "Input")
-results.dir <- file.path(getwd(), "Output")
+data.dir <- file.path(getwd(), "StreamMetabolismBasemetab/Input")
+results.dir <- file.path(getwd(), "StreamMetabolismBasemetab/Output")
 # "interval" is the time interval in seconds.
 # I think there has to be at least one full day where measurements are made for the full 24 hours.
 # Only one csv file should be in the input folder
-results <- bayesmetab(data.dir, results.dir, interval = 600)
+results <- bayesmetab(data.dir, results.dir, interval = 300)
+# with prior K
+results <- bayesmetab(data.dir, results.dir, interval = 600, K.est = FALSE, K.meas.mean = 5)

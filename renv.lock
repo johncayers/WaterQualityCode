@@ -9,6 +9,24 @@
     ]
   },
   "Packages": {
+    "BASEmetab": {
+      "Package": "BASEmetab",
+      "Version": "2.3.2",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "BASEmetab",
+      "RemoteUsername": "dgiling",
+      "RemoteRef": "HEAD",
+      "RemoteSha": "3f68117c94ab432a95fe8118c5f14bbe8bf5ad60",
+      "Hash": "84fa67b86897cc53ab8bf3ea8051ced7",
+      "Requirements": [
+        "R2jags",
+        "coda",
+        "lattice",
+        "zoo"
+      ]
+    },
     "BH": {
       "Package": "BH",
       "Version": "1.78.0-0",
