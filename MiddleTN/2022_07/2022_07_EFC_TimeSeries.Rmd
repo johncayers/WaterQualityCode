@@ -43,6 +43,7 @@ p <- ggplot(DataFacetLong, aes(x=days)) +
   # Here try preferred method of continuous shading based on light intensity 
   geom_segment(aes(x = days, xend = days, y = -Inf, yend = Inf, color = log(Light_lux))) +
    scale_color_gradient(low = "grey", high = "white") +
+  ylab("Value") +
   geom_line(aes(y = measurement), color = "blue") +
   facet_wrap(~ variable, scales = "free", nrow = 3)
 print(p)
