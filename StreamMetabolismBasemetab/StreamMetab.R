@@ -8,7 +8,7 @@ unlink("BASEmetab.zip")
 library(R2jags)
 library(BASEmetab)
 library(readr)
-setwd("C:/Users/ayersj.VANDERBILT/R/WaterQualityCode/StreamMetabolismBasemetab")
+# setwd("C:/Users/ayersj.VANDERBILT/R/WaterQualityCode")
 # Read datafile
 # Data <- read_csv("Yallakool_example.csv", col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
 #                                                   Time = col_time(format = "%H:%M:%S")), 
@@ -21,4 +21,4 @@ results.dir <- file.path(getwd(), "StreamMetabolismBasemetab/Output")
 # Only one csv file should be in the input folder
 results <- bayesmetab(data.dir, results.dir, interval = 300, instant = TRUE)
 # with prior K
-results <- bayesmetab(data.dir, results.dir, interval = 300, K.est = FALSE, K.meas.mean = 5)
+results <- bayesmetab(data.dir, results.dir, interval = 600, K.est = FALSE, K.meas.mean = 5.7, instant = TRUE)
