@@ -17,7 +17,7 @@ knitr::opts_chunk$set(error = FALSE)
 ```{r import packages, echo=FALSE, error=FALSE}
 if (!require("pacman"))
    install.packages("pacman")
-pacman::p_load(tidyverse, skimr, leaflet, scales, corrplot, car, timetk)
+pacman::p_load(tidyverse, skimr, leaflet, scales, corrplot, car, timetk, svglite)
 
 ```
 
@@ -45,9 +45,9 @@ p <- ggplot(DataFacetLong, aes(x=days)) +
    scale_color_gradient(low = "grey", high = "white") +
   ylab("Value") +
   geom_line(aes(y = measurement), color = "blue") +
-  facet_wrap(~ variable, scales = "free", nrow = 3)
+  facet_wrap(~ variable, scales = "free", nrow = 2)
 print(p)
-ggsave("2022_07_EFC_TimeSeries.png", path = "Plots")
+ggsave("2022_07_EFC_TimeSeriesV2.svg", path = "Plots")
 
 ```
 
@@ -85,7 +85,7 @@ p <- ggplot(PercChangeLong, aes(x = days, y = measurement, color = variable)) +
     geom_line() +
     ylab("% change")
 print(p)
-ggsave("2022_07_EFC_TimeSeriesPercChange.png", path = "Plots")
+ggsave("2022_07_EFC_TimeSeriesPercChange.svg", path = "Plots")
 
 ```
 
@@ -95,7 +95,7 @@ ggsave("2022_07_EFC_TimeSeriesPercChange.png", path = "Plots")
 Parameters <- select(DataFacet, -c(DateTime, days))
 Corr <- cor(Parameters, use = "pairwise.complete.obs", method = "spearman")
 corrplot(Corr, method="circle")
-dev.copy(png, "Plots/CorrelationMatrix.png")
+dev.copy(svg, "Plots/CorrelationMatrix.svg")
 dev.off()
 
 ```

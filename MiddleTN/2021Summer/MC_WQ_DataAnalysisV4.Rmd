@@ -18,7 +18,7 @@ knitr::opts_chunk$set(error = FALSE)
 ```{r import packages, results='hide'}
 if (!require("pacman"))
    install.packages("pacman")
-pacman::p_load(tidyverse, skimr, lubridate, readxl, corrplot, leaflet, htmltools, car, psych)
+pacman::p_load(tidyverse, skimr, lubridate, readxl, corrplot, leaflet, htmltools, car, psych, svglite)
 ```
 
 ### Import data
@@ -51,6 +51,7 @@ m <- leaflet(MData) %>%
   addMarkers(lat = ~Lat, lng = ~Lon, popup = ~htmlEscape(SiteName)) %>%
   addTiles()
 m
+# mapview::mapshot(m, file = "MillCreekSitesMap.svg")
 ```
 
 ### Make distance plots
@@ -64,13 +65,15 @@ WQdataSummary <- WQdataLong %>%
     Lower = ParamMean - ParamSD,
     Upper = ParamMean + ParamSD
   )
-print(ggplot(WQdataSummary, aes(x = Dist/1000, y = ParamMean, ymin = Lower, ymax = Upper)) +
+p <- (ggplot(WQdataSummary, aes(x = Dist/1000, y = ParamMean, ymin = Lower, ymax = Upper)) +
       geom_pointrange(na.rm = TRUE) +
       geom_line() +
       facet_wrap(facets = vars(Parameter), scales = "free_y") +
       xlab("Distance from river mouth (km)") +
       theme(axis.text.x = element_text(angle = 90))
       )
+print(p)
+ggsave("MC_SiteDistancePlot.svg")
 
 ```
 

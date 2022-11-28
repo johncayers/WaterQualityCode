@@ -17,7 +17,7 @@ knitr::opts_chunk$set(error = FALSE)
 ```{r import packages, echo=FALSE, error=FALSE}
 if (!require("pacman"))
    install.packages("pacman")
-pacman::p_load(tidyverse, skimr, leaflet, scales, corrplot, car, timetk)
+pacman::p_load(tidyverse, skimr, leaflet, scales, corrplot, car, timetk, svglite)
 
 ```
 
@@ -28,6 +28,7 @@ m <- leaflet(df) %>% addMarkers(lat = 35.951470, lng = -87.016110) %>%
   addProviderTiles(providers$Esri.NatGeoWorldMap)
 # See http://leaflet-extras.github.io/leaflet-providers/preview/index.html
 m
+# ggsave(str_c("2022_07_EFC_Map", '.png'), plot = m, path = "Plots")
 
 ```
 
@@ -72,13 +73,14 @@ InSitu <- Data %>%
   pivot_longer(names_to = "variable", values_to = "measurement", Light_lux:TAL_PC_RFU)
  
 p <- ggplotFunc(InSitu)
-ggsave("2022_07_EFC_TimeSeriesInSitu.png", path = "Plots")
+ggsave("2022_07_EFC_TimeSeriesInSitu.svg", path = "Plots")
 
 Elements <- Data %>%
   select(ElapsedHours, Ca:Nitrate) %>%
+  filter(ElapsedHours > 12) %>%
   pivot_longer(names_to = "variable", values_to = "measurement", Ca:Nitrate)
 
 p <- ggplotFunc(Elements)
-ggsave("2022_07_EFC_TimeSeriesElements.png", path = "Plots")
+ggsave("2022_07_EFC_TimeSeriesElements.svg", path = "Plots")
 
 ```
