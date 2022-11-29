@@ -68,6 +68,7 @@ WQdataSummary <- WQdataLong %>%
 p <- (ggplot(WQdataSummary, aes(x = Dist/1000, y = ParamMean, ymin = Lower, ymax = Upper)) +
       geom_pointrange(na.rm = TRUE) +
       geom_line() +
+      theme_bw() +
       facet_wrap(facets = vars(Parameter), scales = "free_y") +
       xlab("Distance from river mouth (km)") +
       theme(axis.text.x = element_text(angle = 90))

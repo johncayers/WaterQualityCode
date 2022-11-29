@@ -20,7 +20,7 @@ knitr::opts_chunk$set(error = FALSE)
 ```{r import packages}
 if (!require("pacman"))
    install.packages("pacman")
-pacman::p_load(tidyverse, skimr)
+pacman::p_load(tidyverse, skimr, svglite)
 ```
 
 ```{r}
@@ -59,8 +59,33 @@ DataLong$Parameter <- factor(DataLong$Parameter)
 DataPlot <- DataLong %>%
   select(Date, Device, Parameter, Value, max, min)
  
+```
+
+### Plot of GPP vs. ER
+
+```{r}
+Data <- filter(Data, ER.mean < 50)
+Data <- mutate(Data,
+               xlow = GPP.mean-GPP.sd,
+               xhigh = GPP.mean+GPP.sd,
+               ylow = ER.mean-ER.sd,
+               yhigh = ER.mean+ER.sd
+)
+p <- ggplot(Data, aes(x=GPP.mean, y=ER.mean, color = Device)) +
+  geom_point(shape=1) +
+  geom_errorbar(aes(ymin=ylow, ymax=yhigh)) +
+  geom_errorbarh(aes(xmin=xlow, xmax=xhigh)) +
+  theme_bw() +
+  geom_abline(slope=1, intercept=0) +
+  xlab("GPP mean (mg O2 L-1 d-1)") +
+  ylab("ER mean (mg O2 L-1 d-1)") +
+  coord_cartesian(xlim = c(0, 40), ylim = c(0,40))
+print(p)
+ggsave("2022_EFC_GPPvsER_ErrorBars.svg", width = 2000, height = 2*618, units = "px")
 
 ```
+
+### Temporal trends in stream metabolism parameters
 
 ```{r}
 p <- ggplot(DataPlot, aes(x = Date, y = Value, color = Parameter)) +
@@ -87,6 +112,7 @@ ggsave("2022_EFC_StreamMetab_ErrorBars_Filtered.png", width = 2000, height = 2*6
 
 ```
 
+### Stacked area plot of ER and GPP
 
 ```{r}
 
