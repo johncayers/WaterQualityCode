@@ -1,12 +1,12 @@
 ---
-title: "2022 East Fork Creek Stream Metabolism Summary"
+title: "East Fork Creek Stream Metabolism Summary"
 author: "John C. Ayers"
 output:
   html_document:
     df_print: paged
 ---
 
-This notebook is for creating summary plots of stream metabolism parameters estimated from dissolved osygen time series using the BASEmetab package of Grace et al. (2015). In-situ measurements collected from East Fork Creek in Franklin, TN by John C. Ayers, Weizhuo Jing, Kevin Chen, Ella Daugherty, and Gabriel Perez in Summer 2022.  
+This notebook is for creating summary plots of stream metabolism parameters estimated from dissolved oxygen time series using the BASEmetab package of Grace et al. (2015). In-situ measurements collected from East Fork Creek in Franklin, TN by John C. Ayers, Weizhuo Jing, Kevin Chen, Ella Daugherty, and Gabriel Perez.  
 Reference:
 Grace MR, Giling DP, Hladyz S, et al (2015) Fast processing of diel oxygen curves: Estimating stream metabolism with BASE (BAyesian Single-station Estimation). Limnol. Oceanogr. methods / 13:e10011
 
@@ -25,7 +25,7 @@ pacman::p_load(tidyverse, skimr, svglite)
 
 ```{r}
 # setwd("C:/Users/ayersj.VANDERBILT/OneDrive - Vanderbilt/Shared Documents/Pilot Project - Water Quality/WaterQualityCode/2022/EFC")
-Data <- read_csv("2022EFC_StreamMetabolismSummary.csv", 
+Data <- read_csv("EFC_StreamMetabolismSummary.csv", 
     col_types = cols(Date = col_date(format = "%m/%d/%Y"), 
         Device = col_factor(levels = c("MiniDOT", 
             "Exo2"))))
@@ -81,7 +81,7 @@ p <- ggplot(Data, aes(x=GPP.mean, y=ER.mean, color = Device)) +
   ylab("ER mean (mg O2 L-1 d-1)") +
   coord_cartesian(xlim = c(0, 40), ylim = c(0,40))
 print(p)
-ggsave("2022_EFC_GPPvsER_ErrorBars.svg", width = 2000, height = 2*618, units = "px")
+ggsave("EFC_GPPvsER_ErrorBars.svg", width = 2000, height = 2*618, units = "px")
 
 ```
 
@@ -94,7 +94,7 @@ p <- ggplot(DataPlot, aes(x = Date, y = Value, color = Parameter)) +
   geom_smooth(method = "lm", se = FALSE) +
   theme_bw()
 print(p)
-ggsave("2022_EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units = "px")
+ggsave("EFC_StreamMetab_ErrorBars.png", width = 2000, height = 2*618, units = "px")
 
 ```
 
@@ -108,7 +108,7 @@ p <- ggplot(FilteredDataPlot, aes(x = Date, y = Value, color = Parameter)) +
   geom_smooth(method = "lm", se = FALSE) +
   theme_bw()
 print(p)
-ggsave("2022_EFC_StreamMetab_ErrorBars_Filtered.png", width = 2000, height = 2*618, units = "px")
+ggsave("EFC_StreamMetab_ErrorBars_Filtered.png", width = 2000, height = 2*618, units = "px")
 
 ```
 
@@ -138,7 +138,7 @@ p <- ggplot(DataMean, aes(x=Date, y = Value, fill = Parameter)) +
   ylim(-35,35) +
   ylab("Value (mg O2 L-1 day-1)")
 print(p)
-ggsave("2022_EFC_GPPvsER.png", width = 2000, height = 2*618, units = "px")
+ggsave("EFC_GPPvsER.png", width = 2000, height = 2*618, units = "px")
 
 ```
 
