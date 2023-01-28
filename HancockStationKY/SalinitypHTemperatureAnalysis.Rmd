@@ -95,7 +95,7 @@ Surface2$Years <- as.numeric((Surface2$Date - Surface2$Date[1])/365)
 ### Summary Tables for surface water
 
 ```{r summary tables}
-textvars <- c("SpC", "pH", "ORP", "DO", "Temp", "logTurb")
+textvars <- c("SpC", "pH", "Temp")
 summary(Surface2[textvars])
 ```
 
@@ -144,18 +144,18 @@ plot_seasonal_diagnostics(Surface2, Date, pH)
 ### Use Thiel-Sen regression to estimate rate of change in parameter equal to the slope of the parameter across time (Kaushal et al., 2018)
 
 ```{r SpC Thiel-Sen regression}
-mblm(SpC~Years, Surface2)
+# mblm(SpC~Years, Surface2)
 ```
 Thiel-Sen slope is negative, meaning conductivity has decreased over time.
 
 ```{r Temp Thiel-Sen regression}
-mblm(Temp~Years, Surface2)
+# mblm(Temp~Years, Surface2)
 ```
 
 Temperature has also decreased.
 
 ```{r pH Thiel-Sen regression}
-mblm(pH~Years, Surface2)
+# mblm(pH~Years, Surface2)
 ```
 
 pH also decreased. So none of the trends agree with those inferred on a national scale by Kaushal et al. (2018).
