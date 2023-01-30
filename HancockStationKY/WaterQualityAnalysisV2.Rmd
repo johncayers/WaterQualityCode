@@ -128,11 +128,6 @@ Too messy. Just have a separate chunk for each variable. Use Water2
 dataframe and .facet_vars = "Loc"
 
 ```{r}
-
-```
-
-
-```{r}
 sessionInfo()
 save.image()
 ```

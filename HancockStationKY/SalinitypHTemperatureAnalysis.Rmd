@@ -6,6 +6,9 @@ output:
     df_print: paged
 ---
 
+Downloaded Hancock Biological Station data for Kentucky Lake from https://www.murraystate.edu/qacd/cos/hbs/wq.cfm
+Includes data for Water, Temp = "Temperature(Deg C)", SpC = "Specific Conductance(uS/m)", DO = "Dissolved Oxygen(mg/L)", pH = "pH(SU)", ORP = "Oxidation-Reduction Potential(mV)", Turb = "Turbidity(NTU)" from top and bottom of lake.
+
 ```{r set-global, include=FALSE}
 # Suppress all error messages
 knitr::opts_chunk$set(error = FALSE)
