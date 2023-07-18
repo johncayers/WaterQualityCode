@@ -25,7 +25,7 @@ pacman::p_load(tidyverse, readxl, sf, sp, rgdal, tmap, RgoogleMaps, leaflet, ski
 ### Import and summarize data
 
 ```{r}
-Survey <- read_excel("MC_Survey_V2.xlsx", 
+Survey <- read_excel("StreamSurvey/MC_Survey_V2.xlsx", 
      col_types = c("date", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric"))
 Survey <- dplyr::select(Survey, -ConduSPercm, -TDSmgPerL)
 skimr::skim(Survey)

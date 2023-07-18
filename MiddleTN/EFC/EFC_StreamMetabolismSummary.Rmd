@@ -57,7 +57,7 @@ else if (DataLong$Parameter[i] == "ER") {
 }
 DataLong$Parameter <- factor(DataLong$Parameter)
 DataPlot <- DataLong %>%
-  select(Date, Device, Parameter, Value, max, min)
+  dplyr::select(Date, Device, Parameter, Value, max, min)
  
 ```
 

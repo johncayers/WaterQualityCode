@@ -2,8 +2,12 @@
 local({
 
   # the requested version of renv
+<<<<<<< HEAD
   version <- "1.0.0"
   attr(version, "sha") <- NULL
+=======
+  version <- "0.17.2"
+>>>>>>> 3336969d29eee78e8a463de93a28022d79640445
 
   # the project directory
   project <- getwd()
@@ -159,6 +163,16 @@ local({
     if (!inherits(repos, "error") && length(repos))
       return(repos)
   
+<<<<<<< HEAD
+=======
+    # if we're testing, re-use the test repositories
+    if (renv_bootstrap_tests_running()) {
+      repos <- getOption("renv.tests.repos")
+      if (!is.null(repos))
+        return(repos)
+    }
+  
+>>>>>>> 3336969d29eee78e8a463de93a28022d79640445
     # retrieve current repos
     repos <- getOption("repos")
   
@@ -782,6 +796,7 @@ local({
     if (valid)
       return(TRUE)
   
+<<<<<<< HEAD
     # the loaded version of renv doesn't match the requested version;
     # give the user instructions on how to proceed
     remote <- if (!is.null(description[["RemoteSha"]])) {
@@ -795,6 +810,15 @@ local({
       version = description[["Version"]],
       sha     = description[["RemoteSha"]]
     )
+=======
+    # assume four-component versions are from GitHub;
+    # three-component versions are from CRAN
+    components <- strsplit(loadedversion, "[.-]")[[1]]
+    remote <- if (length(components) == 4L)
+      paste("rstudio/renv", loadedversion, sep = "@")
+    else
+      paste("renv", loadedversion, sep = "@")
+>>>>>>> 3336969d29eee78e8a463de93a28022d79640445
   
     fmt <- paste(
       "renv %1$s was loaded from project library, but this project is configured to use renv %2$s.",
