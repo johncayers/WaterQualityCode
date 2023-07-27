@@ -19,6 +19,8 @@ results.dir <- file.path(getwd(), "StreamMetabolismBasemetab/Output")
 # "interval" is the time interval in seconds.
 # I think there has to be at least one full day where measurements are made for the full 24 hours.
 # Only one csv file should be in the input folder
+results <- bayesmetab(data.dir, results.dir, interval = 300)
+# or
 results <- bayesmetab(data.dir, results.dir, interval = 300, instant = TRUE)
 # with prior K
 results <- bayesmetab(data.dir, results.dir, interval = 600, K.est = FALSE, K.meas.mean = 5.7, instant = TRUE)
